@@ -7,17 +7,21 @@ using UnityEngine.InputSystem;
 public class WeaponInHand : MonoBehaviour
 {
     InputActionMap landActionMap;
-    InputAction mouse;
+    InputAction leftMouse;
     public Rig aimLayer;
     // Start is called before the first frame update
     private void Start()
     {
         landActionMap = ActionMapManager.playerInput.actions.FindActionMap(ActionMapManager.ActionMap.Land);
         GameManager.instance.changeActionMap += ChangeActionMap;
+        RegisterAction();
     }
     private void Update()
     {
-        
+        if(leftMouse.IsPressed())
+        {
+            Debug.Log("mouse pressed");
+        }
     }
 
     void ChangeActionMap(string actionMap)
@@ -25,7 +29,7 @@ public class WeaponInHand : MonoBehaviour
         if (actionMap == ActionMapManager.ActionMap.Land)
         {
             RegisterAction();
-            Debug.Log("Player Land Activate");
+            Debug.Log("Player Mouse Activate");
         }
         else
         {
@@ -35,7 +39,7 @@ public class WeaponInHand : MonoBehaviour
 
     void RegisterAction()
     {
-        mouse = landActionMap["Mouse"];
+        leftMouse = landActionMap["LeftMouse"];
 
     }
     private void OnDisable()
