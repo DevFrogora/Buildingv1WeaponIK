@@ -15,6 +15,9 @@ public class BagInventory : MonoBehaviour
     public int MaxSize;
     public int currentSize;
     public Transform itemParent;
+    public Transform slot1WeaponParent;
+    public Transform slot2WeaponParent;
+
 
     [System.Serializable]
     public class AssultSlot
@@ -46,6 +49,7 @@ public class BagInventory : MonoBehaviour
 
     public void ActiveSlot1(bool _activeSlot1)
     {
+        BagUIBroadcast.instance.ActiveSlot(1);
         activeSlot1 = _activeSlot1;
         if (_activeSlot1)
         {
@@ -70,6 +74,7 @@ public class BagInventory : MonoBehaviour
 
     public void SetSlot1Assult(GameObject weapon)
     {
+        activeSlot1 = true;
         //if(slot1.assultPrefab != null)
         //{
         //    //Drop The item If destroy
@@ -84,10 +89,12 @@ public class BagInventory : MonoBehaviour
         {
             if (weapon.GetComponent<m416>())
             {
-                weapon.gameObject.transform.SetParent(itemParent, false);
-                weapon.gameObject.transform.localPosition = Vector3.zero;
+                weapon.gameObject.transform.SetParent(slot1WeaponParent, false);
+                weapon.gameObject.transform.localPosition = new Vector3(0,0, 0.303f); //was  vecto3.zero 
                 slot1.assultPrefab = weapon;
                 BagUIBroadcast.instance.Slot1AssultAdded(weapon);
+                BagUIBroadcast.instance.ActiveSlot(1);
+
             }
         }
     }

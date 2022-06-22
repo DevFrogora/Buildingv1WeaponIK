@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,6 +6,9 @@ using UnityEngine.EventSystems;
 
 public class DropzoneDraggableItem : MonoBehaviour, IDropHandler
 {
+
+
+
     public void OnDrop(PointerEventData eventData)
     {
         Debug.Log(eventData.pointerDrag.name + " was dropped to " + gameObject.name);
@@ -15,7 +19,11 @@ public class DropzoneDraggableItem : MonoBehaviour, IDropHandler
             {
                 GameObject item = (BagInventory.instance.slot1.assultPrefab);
                 item.transform.SetParent(transform.root.parent);
+                item.transform.position =(Vector3) GroundHitter.instance.HitGround();
+                item.transform.rotation = Quaternion.identity;
+
                 BagInventory.instance.SetSlot1Assult(null);
+                BagUIBroadcast.instance.DroppedSlot(1);
             }
         }
 

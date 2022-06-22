@@ -14,6 +14,8 @@ public class BagUIBroadcast : MonoBehaviour
     public event Action<GameObject> slot1AssultAdded,
     slot2AssultAdded,slot1SightAdded,slotMixItemAdded;
 
+    public event Action<int> activeSlot, droppedSlot;
+
     public void Slot1AssultAdded(GameObject item)
     {
         slot1AssultAdded?.Invoke(item);
@@ -32,5 +34,15 @@ public class BagUIBroadcast : MonoBehaviour
     public void SlotMixItemAdded(GameObject item)
     {
         slotMixItemAdded?.Invoke(item);
+    }
+
+    public void ActiveSlot(int slotNumber)
+    {
+        activeSlot?.Invoke(slotNumber);
+    }
+
+    public void DroppedSlot(int slotNumber)
+    {
+        droppedSlot?.Invoke(slotNumber);
     }
 }
