@@ -37,7 +37,7 @@ public class m416 : MonoBehaviour ,IInventoryItem
     public int totalAmmoInInventory;                  //How Much Ammo Is In Your Cache (Storage)
     public int ammoNeeded;                     //Ammo Counter For How Much Is Needed, You Shoot 5 Bullets, You Need 5
 
-    public ShotType shotType;
+    public WeaponShotType.ShotType shotType;
     public float fireRate;
 
     [SerializeField]
@@ -76,17 +76,18 @@ public class m416 : MonoBehaviour ,IInventoryItem
             if(currentAmmo > 0)
             {
                 ParticlesEmitter();
-                if (shotType == ShotType.Auto)
+                if (shotType == WeaponShotType.ShotType.Auto)
                 {
+
                     if (CheckFireRate())
                     {
-                        Debug.Log(shotType);
+
                         InstanceBullet(attachment.muzzlePos);
                     }
                 }
-                else if (shotType == ShotType.Single)
+                else if (shotType == WeaponShotType.ShotType.Single)
                 {
-                    Debug.Log(shotType);
+
                     InstanceBullet(attachment.muzzlePos);
                     StopFiring();
                 }
@@ -121,6 +122,7 @@ public class m416 : MonoBehaviour ,IInventoryItem
     {
         ammoNeeded++;
         currentAmmo--;
+        BagUIBroadcast.instance.Slot1AmmoTextUpdate(currentAmmo + " / inf");
         GameObject projectile = Instantiate(
             BulletPrefab,
             origin.position,
@@ -134,10 +136,33 @@ public class m416 : MonoBehaviour ,IInventoryItem
     {
         Debug.Log("m416 got picked up");
     }
+
+
+
 }
-public enum ShotType
+
+
+public static class WeaponShotType
 {
-    Auto,
-    Single,
-    Burst
+    public enum ShotType
+    {
+        Auto,
+        Single,
+        Burst
+    }
+    public static ShotType Next(this ShotType myEnum)
+    {
+        switch (myEnum)
+        {
+            case ShotType.Auto:
+                return ShotType.Burst;
+            case ShotType.Burst:
+                return ShotType.Single;
+            case ShotType.Single:
+                return ShotType.Auto;
+            default:
+                return 0;
+        }
+    }
 }
+

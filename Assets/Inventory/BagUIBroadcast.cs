@@ -14,7 +14,16 @@ public class BagUIBroadcast : MonoBehaviour
     public event Action<GameObject> slot1AssultAdded,
     slot2AssultAdded,slot1SightAdded,slotMixItemAdded;
 
-    public event Action<int> activeSlot, droppedSlot;
+    public event Action<int,bool> activeSlot, droppedSlot;
+
+    public event Action<WeaponShotType.ShotType> slot1ShotType, slot2ShotType;
+
+    public event Action<string> slot1AmmoTextUpdate;
+
+    public void Slot1AmmoTextUpdate(string text)
+    {
+        slot1AmmoTextUpdate?.Invoke(text);
+    }
 
     public void Slot1AssultAdded(GameObject item)
     {
@@ -36,13 +45,18 @@ public class BagUIBroadcast : MonoBehaviour
         slotMixItemAdded?.Invoke(item);
     }
 
-    public void ActiveSlot(int slotNumber)
+    public void ActiveSlot(int slotNumber,bool activeState)
     {
-        activeSlot?.Invoke(slotNumber);
+        activeSlot?.Invoke(slotNumber, activeState);
     }
 
-    public void DroppedSlot(int slotNumber)
+    public void DroppedSlot(int slotNumber,bool activeState)
     {
-        droppedSlot?.Invoke(slotNumber);
+        droppedSlot?.Invoke(slotNumber, activeState);
+    }
+
+    public void Slot1ShootType(WeaponShotType.ShotType shotType)
+    {
+        slot1ShotType?.Invoke(shotType);
     }
 }

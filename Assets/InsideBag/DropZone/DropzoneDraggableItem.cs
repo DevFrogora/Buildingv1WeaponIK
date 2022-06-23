@@ -7,8 +7,6 @@ using UnityEngine.EventSystems;
 public class DropzoneDraggableItem : MonoBehaviour, IDropHandler
 {
 
-
-
     public void OnDrop(PointerEventData eventData)
     {
         Debug.Log(eventData.pointerDrag.name + " was dropped to " + gameObject.name);
@@ -23,7 +21,7 @@ public class DropzoneDraggableItem : MonoBehaviour, IDropHandler
                 item.transform.rotation = Quaternion.identity;
 
                 BagInventory.instance.SetSlot1Assult(null);
-                BagUIBroadcast.instance.DroppedSlot(1);
+                BagUIBroadcast.instance.DroppedSlot(1,true);
             }
         }
 

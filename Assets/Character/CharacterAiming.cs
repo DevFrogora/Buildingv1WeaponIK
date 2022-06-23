@@ -1,14 +1,21 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CharacterAiming : MonoBehaviour
 {
     public float turnSpeed = 15;
     Camera mainCamera;
+    InputActionMap landActionMap;
+    InputAction escape;
+
     public Transform cameraLookAt;
     public Cinemachine.AxisState xAxis;
     public Cinemachine.AxisState yAxis;
+
+    public bool toggleMouseLock;
 
     private void Awake()
     {
@@ -18,15 +25,62 @@ public class CharacterAiming : MonoBehaviour
 
     void Start()
     {
+        landActionMap = ActionMapManager.playerInput.actions.FindActionMap(ActionMapManager.ActionMap.Land);
         mainCamera = Camera.main;
         //Cursor.visible = false;
         //Cursor.lockState = CursorLockMode.Locked;
+
+        GameManager.instance.changeActionMap += ChangeActionMap;
+        RegisterAction();
+
     }
 
-    // Update is called once per frame
+    void ChangeActionMap(string actionMap)
+    {
+        if (actionMap == ActionMapManager.ActionMap.Land)
+        {
+            //RegisterActionMap();
+            Debug.Log("Player Land Activate");
+        }
+        else
+        {
+            UnRegisterActionMap();
+        }
+    }
+
+    void RegisterAction()
+    {
+        escape = landActionMap["Esc"];
+
+        escape.performed += escapePerformed;
+
+    }
+
+    private void escapePerformed(InputAction.CallbackContext obj)
+    {
+        toggleMouseLock = !toggleMouseLock;
+        if (toggleMouseLock)
+        {
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+
+        }
+        else
+        {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
+    }
+
+    void UnRegisterActionMap()
+    {
+        landActionMap.Disable();
+    }
+
     void FixedUpdate()
     {
-        
+
+        if (!toggleMouseLock) return;
         xAxis.Update(Time.fixedDeltaTime);
         yAxis.Update(Time.fixedDeltaTime);
 

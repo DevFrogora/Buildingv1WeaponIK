@@ -49,7 +49,7 @@ public class BagInventory : MonoBehaviour
 
     public void ActiveSlot1(bool _activeSlot1)
     {
-        BagUIBroadcast.instance.ActiveSlot(1);
+        BagUIBroadcast.instance.ActiveSlot(1,_activeSlot1);
         activeSlot1 = _activeSlot1;
         if (_activeSlot1)
         {
@@ -58,6 +58,12 @@ public class BagInventory : MonoBehaviour
         }
 
     }
+
+    public void SetSlot1ShotType(WeaponShotType.ShotType shotType)
+    {
+        BagUIBroadcast.instance.Slot1ShootType(shotType);
+    }
+
     public void ActiveSlot2(bool _activeSlot2)
     {
         activeSlot2 = _activeSlot2;
@@ -93,7 +99,7 @@ public class BagInventory : MonoBehaviour
                 weapon.gameObject.transform.localPosition = new Vector3(0,0, 0.303f); //was  vecto3.zero 
                 slot1.assultPrefab = weapon;
                 BagUIBroadcast.instance.Slot1AssultAdded(weapon);
-                BagUIBroadcast.instance.ActiveSlot(1);
+                BagUIBroadcast.instance.ActiveSlot(1,true);
 
             }
         }
