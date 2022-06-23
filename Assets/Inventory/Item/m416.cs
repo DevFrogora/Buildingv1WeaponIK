@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class m416 : MonoBehaviour ,IInventoryItem
 {
@@ -30,7 +31,7 @@ public class m416 : MonoBehaviour ,IInventoryItem
     public Attachment attachment;
     public Sound sound;
 
-    public int currentAmmo;                    //The Current Ammo In Weapon
+    public int currentAmmo = 30;                    //The Current Ammo In Weapon
     public int defaultMagSize = 30;               //How Much Ammo Is In Each Mag
     public int magMaxSize = 30;
     public int totalAmmoInInventory;                  //How Much Ammo Is In Your Cache (Storage)
@@ -52,6 +53,12 @@ public class m416 : MonoBehaviour ,IInventoryItem
 
     public ItemType itemType { get => itemtype; set => itemtype = value; }
 
+    public InputAction mouse;
+
+    public bool isFiring = false;
+
+    public ParticleSystem[] muzzleFlash;
+
     bool CheckFireRate()
     {
         if (Time.time >= nextTimeToFire)
@@ -62,29 +69,58 @@ public class m416 : MonoBehaviour ,IInventoryItem
         return false;
     }
 
-    void shoot(bool isShooting)
+    public void shoot()
     {
-        if (isShooting)
+        if (mouse.IsPressed() && isFiring == true)
         {
-            if (shotType == ShotType.Auto)
+            if(currentAmmo > 0)
             {
-                if (CheckFireRate())
+                ParticlesEmitter();
+                if (shotType == ShotType.Auto)
                 {
+                    if (CheckFireRate())
+                    {
+                        Debug.Log(shotType);
+                        InstanceBullet(attachment.muzzlePos);
+                    }
+                }
+                else if (shotType == ShotType.Single)
+                {
+                    Debug.Log(shotType);
                     InstanceBullet(attachment.muzzlePos);
+                    StopFiring();
                 }
             }
-            else if (shotType == ShotType.Single)
-            {
-                InstanceBullet(attachment.muzzlePos);
-                isShooting = false;
-            }
+
         }
 
     }
 
+    void ParticlesEmitter()
+    {
+        foreach (var particle in muzzleFlash)
+        {
+            particle.Emit(1);
+        }
+    }
+
+    public void StartFiring()
+    {
+        isFiring = true;
+
+    }
+
+    public void StopFiring()
+    {
+        isFiring = false;
+    }
+
+
 
     public GameObject InstanceBullet(Transform origin)
     {
+        ammoNeeded++;
+        currentAmmo--;
         GameObject projectile = Instantiate(
             BulletPrefab,
             origin.position,

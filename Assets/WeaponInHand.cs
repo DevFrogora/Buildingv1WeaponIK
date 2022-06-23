@@ -26,14 +26,16 @@ public class WeaponInHand : MonoBehaviour
 
     public GameObject activeWeapon;
     int activeSlotNumber;
-    private void Update()
+    m416 weaponScriptRef;
+    private void LateUpdate()
     {
         if(activeWeapon != null)
         {
-            if (leftMouse.IsPressed())
+            if (weaponScriptRef.isFiring)
             {
                 //Debug.Log("mouse pressed");
                 aimLayer.weight += Time.deltaTime / aimDuration;
+                weaponScriptRef.shoot();
             }
             else
             {
@@ -44,9 +46,9 @@ public class WeaponInHand : MonoBehaviour
         {
             handIK.weight = 0.0f;
         }
-
-
     }
+
+    
 
     void ActiveSlot1( int slotNumber)
     {
@@ -54,6 +56,8 @@ public class WeaponInHand : MonoBehaviour
         {
             activeSlotNumber = slotNumber;
             activeWeapon =  BagInventory.instance.slot1.assultPrefab;
+            weaponScriptRef = activeWeapon.GetComponent<m416>();
+            weaponScriptRef.mouse = leftMouse;
             handIK.weight = 1f;
         }
     }
@@ -86,8 +90,28 @@ public class WeaponInHand : MonoBehaviour
     void RegisterAction()
     {
         leftMouse = landActionMap["LeftMouse"];
+        leftMouse.performed += LeftMouse_performed;
+        leftMouse.canceled += LeftMouse_canceled;
 
     }
+
+    private void LeftMouse_canceled(InputAction.CallbackContext obj)
+    {
+        if (activeWeapon != null)
+        {
+            weaponScriptRef.StopFiring();
+        }
+    }
+
+    private void LeftMouse_performed(InputAction.CallbackContext obj)
+    {
+        if(activeWeapon != null)
+        {
+            weaponScriptRef.StartFiring();
+
+        }
+    }
+
     private void OnDisable()
     {
         UnRegisterActionMap();
