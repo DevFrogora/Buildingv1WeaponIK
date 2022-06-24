@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 using TMPro;
+using System;
 
 public class OnScreenItemSlotSelection : MonoBehaviour
 {
@@ -14,6 +15,9 @@ public class OnScreenItemSlotSelection : MonoBehaviour
     public TextMeshProUGUI slot1AmmoText;
     public Image slot2ShotTypeImage;
 
+    public Image ReloadTimerRadial;
+    public TextMeshProUGUI ReloadTextTime;
+
 
     private void Start()
     {
@@ -21,8 +25,21 @@ public class OnScreenItemSlotSelection : MonoBehaviour
         BagUIBroadcast.instance.slot1AssultAdded += SetSlot1;
         BagUIBroadcast.instance.slot2AssultAdded += SetSlot2;
         BagUIBroadcast.instance.slot1AmmoTextUpdate += Slot1AmmoTextUpdate;
-        //BagUIBroadcast.instance.Slot1ShootType += 
+        BagUIBroadcast.instance.slot1ShotType += Slot1ShootType;
+        BagUIBroadcast.instance.reloadAmmo += ReloadUi;
 
+    }
+
+    void ReloadUi(float fillAmount, string text)
+    {
+        ReloadTimerRadial.fillAmount = fillAmount;
+        ReloadTextTime.text = text;
+
+    }
+
+    private void Slot1ShootType(WeaponShotType.ShotType shotType)
+    {
+        slot1ShotTypeText.text = shotType.ToString();
     }
 
     void Slot1AmmoTextUpdate(string text)
@@ -81,14 +98,13 @@ public class OnScreenItemSlotSelection : MonoBehaviour
         BagInventory.instance.ActiveSlot2(!BagInventory.instance.activeSlot2);
     }
 
-    WeaponShotType.ShotType shotType = WeaponShotType.ShotType.Auto;
 
     public void Slot1ShotTypeClicked()
     {
         if(WeaponInHand.instance.activeWeapon)
         {
-            BagInventory.instance.SetSlot1ShotType(WeaponInHand.instance.weaponScriptRef.shotType);
-            slot1ShotTypeText.text = WeaponInHand.instance.weaponScriptRef.shotType.ToString();
+            WeaponInHand.instance.SetNextShotTYpe(WeaponInHand.instance.weaponScriptRef.shotType);
+            
         }
     }
 

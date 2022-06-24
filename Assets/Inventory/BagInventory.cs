@@ -59,10 +59,7 @@ public class BagInventory : MonoBehaviour
 
     }
 
-    public void SetSlot1ShotType(WeaponShotType.ShotType shotType)
-    {
-        BagUIBroadcast.instance.Slot1ShootType(shotType);
-    }
+
 
     public void ActiveSlot2(bool _activeSlot2)
     {

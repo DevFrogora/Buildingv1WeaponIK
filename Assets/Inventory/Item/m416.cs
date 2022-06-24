@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
+using System;
 public class m416 : MonoBehaviour ,IInventoryItem
 {
     public int id;
@@ -23,9 +23,9 @@ public class m416 : MonoBehaviour ,IInventoryItem
     [System.Serializable]
     public class Sound
     {
-        public AudioSource weaponSound;             //Weapon Sound Effect
-        public AudioSource noAmmoSound;             //Empty Gun Sound 
-        public AudioSource reloadSound;             //Reload Sound 
+        public AudioClip weaponSound;             //Weapon Sound Effect
+        public AudioClip noAmmoSound;             //Empty Gun Sound 
+        public AudioClip reloadSound;             //Reload Sound 
     };
 
     public Attachment attachment;
@@ -53,11 +53,35 @@ public class m416 : MonoBehaviour ,IInventoryItem
 
     public ItemType itemType { get => itemtype; set => itemtype = value; }
 
-    public InputAction mouse;
+    public InputAction mouse,reload;
 
     public bool isFiring = false;
 
     public ParticleSystem[] muzzleFlash;
+
+
+    public event Action<string> uiAmmoUpdater;
+    public event Action<WeaponShotType.ShotType> shotTypeUpdater;
+    public event Action<float , string> uiReloadUpdater;
+
+    AudioSource audioSource;
+
+    private void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
+
+    public void UiUpdate(string text)
+    {
+        uiAmmoUpdater?.Invoke(text);
+    }
+
+    public void ShotTypeUpdater(WeaponShotType.ShotType shotType)
+    {
+        shotTypeUpdater?.Invoke(shotType);
+    }
+
+
 
     bool CheckFireRate()
     {
@@ -75,7 +99,6 @@ public class m416 : MonoBehaviour ,IInventoryItem
         {
             if(currentAmmo > 0)
             {
-                ParticlesEmitter();
                 if (shotType == WeaponShotType.ShotType.Auto)
                 {
 
@@ -92,9 +115,49 @@ public class m416 : MonoBehaviour ,IInventoryItem
                     StopFiring();
                 }
             }
+            else
+            {
+                //StartCoroutine(playTheSound(sound.noAmmoSound));
+                if(mouse.triggered)
+                {
+                    audioSource.PlayOneShot(sound.noAmmoSound);
+                }
+
+            }
 
         }
+    }
 
+    public void Reloading()
+    {
+        StartCoroutine(reloadTimer());
+        float finalTime = Time.time + 5;
+        while (Time.time < finalTime)
+        {
+
+            float currenTime = Time.time;
+            Debug.Log(currenTime);
+            uiReloadUpdater(finalTime / currenTime, (finalTime / currenTime).ToString());
+
+            
+        }
+
+    }
+    bool isReloading;
+
+    IEnumerator reloadTimer()
+    {
+        isReloading = true;
+        isFiring = false;
+
+        yield return new WaitForSeconds(7);
+        currentAmmo += ammoNeeded;
+        //reseting Ammo
+        ammoNeeded = 0;
+        uiAmmoUpdater(currentAmmo + " / inf");
+        isReloading = false;
+
+        isFiring = true;
     }
 
     void ParticlesEmitter()
@@ -107,6 +170,7 @@ public class m416 : MonoBehaviour ,IInventoryItem
 
     public void StartFiring()
     {
+        if (isReloading) return;
         isFiring = true;
 
     }
@@ -122,7 +186,10 @@ public class m416 : MonoBehaviour ,IInventoryItem
     {
         ammoNeeded++;
         currentAmmo--;
-        BagUIBroadcast.instance.Slot1AmmoTextUpdate(currentAmmo + " / inf");
+        uiAmmoUpdater(currentAmmo + " / inf");
+        ParticlesEmitter();
+        audioSource.PlayOneShot(sound.weaponSound);
+        //audioSource.PlayOneShot(sound.weaponSound);
         GameObject projectile = Instantiate(
             BulletPrefab,
             origin.position,
@@ -131,10 +198,12 @@ public class m416 : MonoBehaviour ,IInventoryItem
             );
         return projectile;
     }
+    
 
     public void OnPickup()
     {
-        Debug.Log("m416 got picked up");
+        uiAmmoUpdater(currentAmmo + " / inf");
+        shotTypeUpdater(shotType);
     }
 
 

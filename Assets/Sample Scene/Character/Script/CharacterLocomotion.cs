@@ -24,7 +24,7 @@ public class CharacterLocomotion : MonoBehaviour
     Rigidbody rigidBody;
     [SerializeField] GameObject stepRayUpper;
     [SerializeField] GameObject stepRayLower;
-    [SerializeField] float stepHeight = 0.3f;
+    //[SerializeField] float stepHeight = 0.3f;
     [SerializeField] float stepSmooth = 2f;
 
     [SerializeField] GameObject windowRayChecker;

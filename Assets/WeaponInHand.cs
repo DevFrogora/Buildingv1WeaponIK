@@ -8,7 +8,7 @@ using UnityEngine.InputSystem;
 public class WeaponInHand : MonoBehaviour
 {
     InputActionMap landActionMap;
-    InputAction leftMouse,rightMouse;
+    InputAction leftMouse,rightMouse,reload;
     public float aimDuration = 0.3f;
 
     public UnityEngine.Animations.Rigging.Rig handIK;
@@ -28,13 +28,8 @@ public class WeaponInHand : MonoBehaviour
         GameManager.instance.changeActionMap += ChangeActionMap;
         BagUIBroadcast.instance.activeSlot += ActiveSlot;
         BagUIBroadcast.instance.droppedSlot += DroppedSlot;
-        BagUIBroadcast.instance.slot1ShotType += SetShootType;
-        BagUIBroadcast.instance.slot1AssultAdded += SetSlot1;
-        RegisterAction();
-    }
 
-    private void SetSlot1(GameObject obj)
-    {
+        RegisterAction();
     }
 
 
@@ -42,18 +37,17 @@ public class WeaponInHand : MonoBehaviour
     int activeSlotNumber;
     public m416 weaponScriptRef; // we have to make interface so same method work on different type of weapon
 
-    //WeaponShotType.ShotType shotType = WeaponShotType.ShotType.Auto;
-
     private void LateUpdate()
     {
         if(activeWeapon != null)
         {
             if (weaponScriptRef.isFiring)
             {
-                
-                //Debug.Log("mouse pressed");
                 aimLayer.weight += Time.deltaTime / aimDuration;
                 weaponScriptRef.shoot();
+            }else if (reload.triggered)
+            {
+                weaponScriptRef.Reloading();
             }
             else
             {
@@ -73,8 +67,6 @@ public class WeaponInHand : MonoBehaviour
         }
     }
 
-    
-
     void ActiveSlot( int slotNumber,bool activeState)
     {
         if(slotNumber == 1)
@@ -83,9 +75,28 @@ public class WeaponInHand : MonoBehaviour
             activeWeapon =  BagInventory.instance.slot1.assultPrefab;
             weaponScriptRef = activeWeapon.GetComponent<m416>();
             weaponScriptRef.mouse = leftMouse;
-            BagUIBroadcast.instance.Slot1AmmoTextUpdate(weaponScriptRef.currentAmmo + " / inf");
+            weaponScriptRef.reload = reload;
+            weaponScriptRef.uiAmmoUpdater += WeaponScriptRef_uiUpdater;
+            weaponScriptRef.shotTypeUpdater += WeaponScriptRef_shotTypeUpdater;
+            weaponScriptRef.uiReloadUpdater += WeaponScriptRef_uiReloadUpdater;
+            weaponScriptRef.OnPickup();
             handIK.weight = 1f;
         }
+    }
+
+    private void WeaponScriptRef_uiReloadUpdater(float fillAmount, string text)
+    {
+        BagUIBroadcast.instance.ReloadAammoUIUpdater(fillAmount, text);
+    }
+
+    private void WeaponScriptRef_shotTypeUpdater(WeaponShotType.ShotType shotType)
+    {
+        BagUIBroadcast.instance.Slot1ShootType(shotType);
+    }
+
+    private void WeaponScriptRef_uiUpdater(string text)
+    {
+        BagUIBroadcast.instance.Slot1AmmoTextUpdate(text);
     }
 
     void DroppedSlot(int slotNumber, bool activeState)
@@ -97,16 +108,14 @@ public class WeaponInHand : MonoBehaviour
         }
     }
 
-    public void SetShootType(WeaponShotType.ShotType _shotType)
+    public void SetNextShotTYpe(WeaponShotType.ShotType _shotType)
     {
         if(activeWeapon != null)
         {
             weaponScriptRef.shotType = _shotType.Next();
-            Debug.Log(weaponScriptRef.shotType);
+            weaponScriptRef.ShotTypeUpdater(weaponScriptRef.shotType);
         }
     }
-
-
 
 
     void ChangeActionMap(string actionMap)
@@ -126,22 +135,10 @@ public class WeaponInHand : MonoBehaviour
     {
         leftMouse = landActionMap["LeftMouse"];
         rightMouse = landActionMap["RightMouse"];
+        reload = landActionMap["R"];
+
         leftMouse.performed += LeftMouse_performed;
         leftMouse.canceled += LeftMouse_canceled;
-        leftMouse.performed += RightMouse_performed;
-        leftMouse.canceled += RightMouse_canceled;
-
-    }
-
-
-    private void RightMouse_performed(InputAction.CallbackContext obj)
-    {
-        //aimLayer.weight = 1f;
-    }
-
-    private void RightMouse_canceled(InputAction.CallbackContext obj)
-    {
-        //aimLayer.weight = 0f;
     }
 
 
