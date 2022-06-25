@@ -58,13 +58,16 @@ public class m416 : MonoBehaviour ,IInventoryItem
     public bool isFiring = false;
 
     public ParticleSystem[] muzzleFlash;
+    public ParticleSystem hitEffect;
 
 
     public event Action<string> uiAmmoUpdater;
     public event Action<WeaponShotType.ShotType> shotTypeUpdater;
-    public event Action<float , string> uiReloadUpdater;
+    public event Action<float , string , bool> uiReloadUpdater;
 
     AudioSource audioSource;
+
+    public List<GameObject> bullets = new List<GameObject>(); 
 
     private void Start()
     {
@@ -92,7 +95,8 @@ public class m416 : MonoBehaviour ,IInventoryItem
         }
         return false;
     }
-
+    Ray bulletRay;
+    RaycastHit bulletHitInfo;
     public void shoot()
     {
         if (mouse.IsPressed() && isFiring == true)
@@ -105,7 +109,24 @@ public class m416 : MonoBehaviour ,IInventoryItem
                     if (CheckFireRate())
                     {
 
-                        InstanceBullet(attachment.muzzlePos);
+                       GameObject bullet = InstanceBullet(attachment.muzzlePos);
+                        bulletRay.origin = bullet.transform.position;
+                        bulletRay.direction = bullet.transform.forward;
+                        
+                        if (Physics.Raycast(bulletRay, out bulletHitInfo ,100))
+                        {
+                            //Debug.DrawLine(bulletRay.origin, bulletHitInfo.point, Color.red,20);
+                            hitEffect.transform.position = bulletHitInfo.point;
+                            hitEffect.transform.forward = bulletHitInfo.normal;
+                            Debug.Log(bulletHitInfo.collider.gameObject.name);
+                            bullet.transform.position = bulletHitInfo.point;
+                            bullets.Add(bullet);
+                            hitEffect.Emit(1);
+                        }
+                        else
+                        {
+                            Debug.DrawLine(bullet.transform.position, bullet.transform.position  + (bullet.transform.forward * 10f), Color.red,20);
+                        }
                     }
                 }
                 else if (shotType == WeaponShotType.ShotType.Single)
@@ -131,16 +152,6 @@ public class m416 : MonoBehaviour ,IInventoryItem
     public void Reloading()
     {
         StartCoroutine(reloadTimer());
-        float finalTime = Time.time + 5;
-        while (Time.time < finalTime)
-        {
-
-            float currenTime = Time.time;
-            Debug.Log(currenTime);
-            uiReloadUpdater(finalTime / currenTime, (finalTime / currenTime).ToString());
-
-            
-        }
 
     }
     bool isReloading;
@@ -149,14 +160,20 @@ public class m416 : MonoBehaviour ,IInventoryItem
     {
         isReloading = true;
         isFiring = false;
-
-        yield return new WaitForSeconds(7);
+        float timerAdder = 0f;
+        while(timerAdder < 2.5f)
+        {
+            timerAdder += 0.1f;
+            yield return new WaitForSeconds(0.1f);
+            uiReloadUpdater(timerAdder / 2.5f, timerAdder.ToString("00.00") , true);
+        }
+        uiReloadUpdater(timerAdder / 2.5f, timerAdder.ToString("00.00"), false);
         currentAmmo += ammoNeeded;
-        //reseting Ammo
-        ammoNeeded = 0;
         uiAmmoUpdater(currentAmmo + " / inf");
+        Debug.Log("end of reloading");
+        //reseting 
+        ammoNeeded = 0;
         isReloading = false;
-
         isFiring = true;
     }
 

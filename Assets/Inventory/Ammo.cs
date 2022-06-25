@@ -12,4 +12,25 @@ public class Ammo : MonoBehaviour
     };
     public AmmoType ammoType;
 
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log("OnCollisionEnter");
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Debug.Log("ColliderEnter");
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        Debug.Log("OnCollisionStay");
+    }
+
+    private void OnDestroy()
+    {
+        Debug.Log("I am getting destroyed ?");
+    }
+
 }

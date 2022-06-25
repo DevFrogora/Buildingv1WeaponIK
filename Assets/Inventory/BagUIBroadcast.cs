@@ -20,11 +20,11 @@ public class BagUIBroadcast : MonoBehaviour
 
     public event Action<string> slot1AmmoTextUpdate;
 
-    public event Action<float, String> reloadAmmo;
+    public event Action<float, String , bool> reloadAmmo;
 
-    public void ReloadAammoUIUpdater(float fillAmount,string text)
+    public void ReloadAammoUIUpdater(float fillAmount,string text, bool visibility)
     {
-        reloadAmmo?.Invoke(fillAmount, text);
+        reloadAmmo?.Invoke(fillAmount, text, visibility);
     }
 
     public void Slot1AmmoTextUpdate(string text)

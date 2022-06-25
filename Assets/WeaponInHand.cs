@@ -53,6 +53,7 @@ public class WeaponInHand : MonoBehaviour
             {
                 if(rightMouse.IsPressed())
                 {
+
                     aimLayer.weight += Time.deltaTime / aimDuration;
                 }
                 else
@@ -84,9 +85,9 @@ public class WeaponInHand : MonoBehaviour
         }
     }
 
-    private void WeaponScriptRef_uiReloadUpdater(float fillAmount, string text)
+    private void WeaponScriptRef_uiReloadUpdater(float fillAmount, string text, bool visibility)
     {
-        BagUIBroadcast.instance.ReloadAammoUIUpdater(fillAmount, text);
+        BagUIBroadcast.instance.ReloadAammoUIUpdater(fillAmount, text , visibility);
     }
 
     private void WeaponScriptRef_shotTypeUpdater(WeaponShotType.ShotType shotType)

@@ -27,13 +27,15 @@ public class OnScreenItemSlotSelection : MonoBehaviour
         BagUIBroadcast.instance.slot1AmmoTextUpdate += Slot1AmmoTextUpdate;
         BagUIBroadcast.instance.slot1ShotType += Slot1ShootType;
         BagUIBroadcast.instance.reloadAmmo += ReloadUi;
+        ReloadTimerRadial.gameObject.SetActive(false);
 
     }
 
-    void ReloadUi(float fillAmount, string text)
+    void ReloadUi(float fillAmount, string text, bool visible)
     {
         ReloadTimerRadial.fillAmount = fillAmount;
         ReloadTextTime.text = text;
+        ReloadTimerRadial.gameObject.SetActive(visible);
 
     }
 
