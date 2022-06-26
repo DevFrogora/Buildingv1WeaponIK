@@ -6,6 +6,7 @@ using UnityEngine;
 public class Ammo : MonoBehaviour
 {
     public ParticleSystem hitEffect;
+    public ParticleSystem hitEffectPrefab;
     public enum AmmoType
     {
         FivePointFive,
@@ -32,15 +33,16 @@ public class Ammo : MonoBehaviour
 
     private void Start()
     {
-
     }
+    bool isFired = false;
 
     public void CreateBullet(Transform muzzlePoint)
     {
         hitted = false;
-
+        isFired = true;
         initalPosition = muzzlePoint.position;
         initialVelocity = muzzlePoint.forward.normalized * bulletSpeed;
+        hitEffect = Instantiate(hitEffectPrefab);
         time = 0f;
     }
 
@@ -54,7 +56,10 @@ public class Ammo : MonoBehaviour
     {
         if (time > maxLifeTime)
         {
-            gameObject.SetActive(false);
+            isFired = false;
+            StartCoroutine(DisableAfterHitEffect());
+            //gameObject.SetActive(false);
+
         }
     }
 
@@ -76,7 +81,7 @@ public class Ammo : MonoBehaviour
         bulletRay.origin = start;
         bulletRay.direction = direction;
 
-        if(!hitted)
+        if(!hitted && time < maxLifeTime)
         {
             if (Physics.Raycast(bulletRay, out bulletHitInfo, distance))
             {
@@ -87,31 +92,43 @@ public class Ammo : MonoBehaviour
         }
 
 
-        if (time >= maxLifeTime || hitted)
+        if (time >= maxLifeTime && hitted)
         {
+            hitted = false;
             hitEffect.transform.position = bulletHitInfo.point;
             hitEffect.transform.forward = bulletHitInfo.normal;
-
+            //Instantiate(hitEffect, bulletHitInfo.point, bulletHitInfo.normal, null);
             transform.position = bulletHitInfo.point;
             hitEffect.Emit(1);
             Debug.DrawLine(start, end, Color.red, 5);
+            //StartCoroutine(DisableAfterHitEffect());
 
 
         }
-        else
+        else if(!hitted && time < maxLifeTime)
         {
             Debug.DrawLine(start, end, Color.red, 5);
             transform.position = end;
             Debug.Log(" else part");
         }
 
+    }
 
+    IEnumerator DisableAfterHitEffect()
+    {
+        yield return new WaitForSeconds(2f);
+        Debug.Log("Destroying hit effect");
+        Destroy(hitEffect.gameObject);
+        gameObject.SetActive(false);
     }
 
 
     private void LateUpdate()
     {
-        Updatebullet(Time.deltaTime);
+        if(isFired)
+        {
+            Updatebullet(Time.deltaTime);
+        }
     }
 
 

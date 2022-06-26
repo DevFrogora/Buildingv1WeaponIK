@@ -230,6 +230,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hitEffect: {fileID: 5059885892829117824, guid: 167e9a1a7c94b9b46b5bcb5a2090700a, type: 3}
+  hitEffectPrefab: {fileID: 5059885892829117824, guid: 167e9a1a7c94b9b46b5bcb5a2090700a, type: 3}
   ammoType: 0
   time: 0
   initalPosition: {x: 0, y: 0, z: 0}
