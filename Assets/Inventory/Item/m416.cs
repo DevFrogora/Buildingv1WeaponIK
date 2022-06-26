@@ -58,8 +58,6 @@ public class m416 : MonoBehaviour ,IInventoryItem
     public bool isFiring = false;
 
     public ParticleSystem[] muzzleFlash;
-    public ParticleSystem hitEffect;
-
 
     public event Action<string> uiAmmoUpdater;
     public event Action<WeaponShotType.ShotType> shotTypeUpdater;
@@ -68,7 +66,7 @@ public class m416 : MonoBehaviour ,IInventoryItem
     AudioSource audioSource;
 
     [SerializeField]
-    //public Queue<GameObject> bulletPool = new Queue<GameObject>();
+
     public List<GameObject> bulletPool = new List<GameObject>();
     public int bulletPoolSize = 10;
 
@@ -96,10 +94,10 @@ public class m416 : MonoBehaviour ,IInventoryItem
                     GameObject bullet = bulletPool[i];
                     bullet.transform.position = attachment.muzzlePos.transform.position;
                     bullet.transform.rotation = attachment.muzzlePos.transform.rotation;
-                    bullet.SetActive(true);
+                    //bullet.SetActive(true);
                     Ammo ammoScriptRef = bullet.GetComponent<Ammo>();
                     ammoScriptRef.CreateBullet();
-                    ammoScriptRef.onAmmoDestroy += AmmoScriptRef_onAmmoDestroy;
+
                     return bullet;
                 }
             }
@@ -113,16 +111,6 @@ public class m416 : MonoBehaviour ,IInventoryItem
         return null;
     }
 
-    void ReturnBullet(GameObject bullet)
-    {
-        bullet.SetActive(false);
-
-    }
-
-    private void AmmoScriptRef_onAmmoDestroy(GameObject bullet)
-    {
-        ReturnBullet(bullet);
-    }
 
     public void UiUpdate(string text)
     {
@@ -145,8 +133,7 @@ public class m416 : MonoBehaviour ,IInventoryItem
         }
         return false;
     }
-    Ray bulletRay;
-    RaycastHit bulletHitInfo;
+
     public void shoot()
     {
         if (mouse.IsPressed() && isFiring == true)
@@ -170,7 +157,6 @@ public class m416 : MonoBehaviour ,IInventoryItem
             }
             else
             {
-                //StartCoroutine(playTheSound(sound.noAmmoSound));
                 if(mouse.triggered)
                 {
                     audioSource.PlayOneShot(sound.noAmmoSound);
@@ -184,6 +170,7 @@ public class m416 : MonoBehaviour ,IInventoryItem
     private void FireBullet()
     {
         GameObject bullet = GetBullet();
+        bullet.SetActive(true);
         UiUpdateOnOnFire();
     }
 

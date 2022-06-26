@@ -22,12 +22,7 @@ public class Ammo : MonoBehaviour
 
     float maxLifeTime = 3f;
 
-    public event Action<GameObject> onAmmoDestroy;
 
-    public void OnAmmoDestroy(GameObject bullet)
-    {
-        onAmmoDestroy?.Invoke(bullet);
-    }
     Vector3 GetPosition()
     {
         // p + v*t + 0.5* g *t *t
@@ -57,7 +52,7 @@ public class Ammo : MonoBehaviour
     {
         if(time > maxLifeTime)
         {
-            OnAmmoDestroy(gameObject);
+            gameObject.SetActive(false);
         }
     }
 
@@ -80,18 +75,16 @@ public class Ammo : MonoBehaviour
 
         if (Physics.Raycast(bulletRay, out bulletHitInfo, distance))
         {
-            //Debug.DrawLine(bulletRay.origin, bulletHitInfo.point, Color.red,20);
-
             hitEffect.transform.position = bulletHitInfo.point;
             hitEffect.transform.forward = bulletHitInfo.normal;
-            Debug.Log(bulletHitInfo.collider.gameObject.name);
+    
             transform.position = bulletHitInfo.point;
             hitEffect.Emit(1);
             time = maxLifeTime;
         }
         else
         {
-            Debug.DrawLine(transform.position, transform.position + (transform.forward * 10f), Color.red, 20);
+            //Debug.DrawLine(transform.position, transform.position + (transform.forward * 10f), Color.red, 20);
 
         }
     }
@@ -101,9 +94,5 @@ public class Ammo : MonoBehaviour
         Updatebullet(Time.deltaTime);
     }
 
-    private void OnDestroy()
-    {
-        Debug.Log("I am getting destroyed ?");
-    }
 
 }
