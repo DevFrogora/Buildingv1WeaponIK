@@ -94,9 +94,8 @@ public class m416 : MonoBehaviour ,IInventoryItem
                     GameObject bullet = bulletPool[i];
                     bullet.transform.position = attachment.muzzlePos.transform.position;
                     bullet.transform.rotation = attachment.muzzlePos.transform.rotation;
-                    //bullet.SetActive(true);
                     Ammo ammoScriptRef = bullet.GetComponent<Ammo>();
-                    ammoScriptRef.CreateBullet();
+                    ammoScriptRef.CreateBullet(attachment.muzzlePos.transform);
 
                     return bullet;
                 }

@@ -27,18 +27,20 @@ public class Ammo : MonoBehaviour
     {
         // p + v*t + 0.5* g *t *t
         Vector3 gravity = Vector3.down * bulletDrop;
-        return (initalPosition) + (initialVelocity * time) + (0.5f * gravity * time * time); 
+        return (initalPosition) + (initialVelocity * time) + (0.5f * gravity * time * time);
     }
 
     private void Start()
     {
-        CreateBullet();
+
     }
 
-    public void CreateBullet()
+    public void CreateBullet(Transform muzzlePoint)
     {
-        initalPosition = transform.position;
-        initialVelocity = transform.forward.normalized * bulletSpeed;
+        hitted = false;
+
+        initalPosition = muzzlePoint.position;
+        initialVelocity = muzzlePoint.forward.normalized * bulletSpeed;
         time = 0f;
     }
 
@@ -50,7 +52,7 @@ public class Ammo : MonoBehaviour
 
     private void DestroyBullet()
     {
-        if(time > maxLifeTime)
+        if (time > maxLifeTime)
         {
             gameObject.SetActive(false);
         }
@@ -66,33 +68,52 @@ public class Ammo : MonoBehaviour
 
     Ray bulletRay;
     RaycastHit bulletHitInfo;
-    void RaycastSegment(Vector3 start , Vector3 end)
+    bool hitted = false;
+    void RaycastSegment(Vector3 start, Vector3 end)
     {
         Vector3 direction = end - start;
         float distance = direction.magnitude;
         bulletRay.origin = start;
         bulletRay.direction = direction;
 
-        if (Physics.Raycast(bulletRay, out bulletHitInfo, distance))
+        if(!hitted)
+        {
+            if (Physics.Raycast(bulletRay, out bulletHitInfo, distance))
+            {
+                hitted = true;
+                time = maxLifeTime;
+                Debug.Log("we hit the collider no else part");
+            }
+        }
+
+
+        if (time >= maxLifeTime || hitted)
         {
             hitEffect.transform.position = bulletHitInfo.point;
             hitEffect.transform.forward = bulletHitInfo.normal;
-    
+
             transform.position = bulletHitInfo.point;
             hitEffect.Emit(1);
-            time = maxLifeTime;
+            Debug.DrawLine(start, end, Color.red, 5);
+
+
         }
         else
         {
-            //Debug.DrawLine(transform.position, transform.position + (transform.forward * 10f), Color.red, 20);
-
+            Debug.DrawLine(start, end, Color.red, 5);
+            transform.position = end;
+            Debug.Log(" else part");
         }
+
+
     }
 
-    private void Update()
+
+    private void LateUpdate()
     {
         Updatebullet(Time.deltaTime);
     }
+
 
 
 }

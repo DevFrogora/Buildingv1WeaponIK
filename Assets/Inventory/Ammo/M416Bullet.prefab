@@ -234,7 +234,7 @@ MonoBehaviour:
   time: 0
   initalPosition: {x: 0, y: 0, z: 0}
   initialVelocity: {x: 0, y: 0, z: 0}
-  bulletSpeed: 20
+  bulletSpeed: 3
   bulletDrop: 0
 --- !u!65 &1273125805552145268
 BoxCollider:
