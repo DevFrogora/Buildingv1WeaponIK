@@ -67,12 +67,44 @@ public class m416 : MonoBehaviour ,IInventoryItem
 
     AudioSource audioSource;
 
-    public List<GameObject> bullets = new List<GameObject>(); 
+    public Queue<GameObject> bulletPool = new Queue<GameObject>();
+    public int bulletPoolSize = 10;
 
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
+
+        for(int i = 0; i < bulletPoolSize; i++)
+        {
+            GameObject bullet = InstanceBullet(attachment.muzzlePos);
+            bulletPool.Enqueue(bullet);
+            bullet.SetActive(false);
+        }
     }
+
+    GameObject GetBullet()
+    {
+        if(bulletPool.Count>0)
+        {
+            GameObject bullet = bulletPool.Dequeue();
+            bullet.transform.position = attachment.muzzlePos.transform.position;
+            bullet.transform.rotation = attachment.muzzlePos.transform.rotation;
+            bullet.SetActive(true);
+            return bullet;
+        }
+        else
+        {
+            GameObject bullet = InstanceBullet(attachment.muzzlePos);
+            return bullet;
+        }
+    }
+
+    void ReturnBullet(GameObject bullet)
+    {
+        bulletPool.Enqueue(bullet);
+        bullet.SetActive(false);
+    }
+
 
     public void UiUpdate(string text)
     {
@@ -108,31 +140,13 @@ public class m416 : MonoBehaviour ,IInventoryItem
 
                     if (CheckFireRate())
                     {
-
-                       GameObject bullet = InstanceBullet(attachment.muzzlePos);
-                        bulletRay.origin = bullet.transform.position;
-                        bulletRay.direction = bullet.transform.forward;
-                        
-                        if (Physics.Raycast(bulletRay, out bulletHitInfo ,100))
-                        {
-                            //Debug.DrawLine(bulletRay.origin, bulletHitInfo.point, Color.red,20);
-                            hitEffect.transform.position = bulletHitInfo.point;
-                            hitEffect.transform.forward = bulletHitInfo.normal;
-                            Debug.Log(bulletHitInfo.collider.gameObject.name);
-                            bullet.transform.position = bulletHitInfo.point;
-                            bullets.Add(bullet);
-                            hitEffect.Emit(1);
-                        }
-                        else
-                        {
-                            Debug.DrawLine(bullet.transform.position, bullet.transform.position  + (bullet.transform.forward * 10f), Color.red,20);
-                        }
+                        FireBullet();
                     }
                 }
                 else if (shotType == WeaponShotType.ShotType.Single)
                 {
 
-                    InstanceBullet(attachment.muzzlePos);
+                    InstanceBullet(attachment.muzzlePos); // use  GetBullet();
                     StopFiring();
                 }
             }
@@ -147,6 +161,21 @@ public class m416 : MonoBehaviour ,IInventoryItem
             }
 
         }
+    }
+
+    private void FireBullet()
+    {
+        GameObject bullet = GetBullet();
+        UiUpdateOnOnFire();
+    }
+
+    void UiUpdateOnOnFire()
+    {
+        ammoNeeded++;
+        currentAmmo--;
+        uiAmmoUpdater(currentAmmo + " / inf");
+        ParticlesEmitter();
+        audioSource.PlayOneShot(sound.weaponSound);
     }
 
     public void Reloading()
@@ -201,12 +230,6 @@ public class m416 : MonoBehaviour ,IInventoryItem
 
     public GameObject InstanceBullet(Transform origin)
     {
-        ammoNeeded++;
-        currentAmmo--;
-        uiAmmoUpdater(currentAmmo + " / inf");
-        ParticlesEmitter();
-        audioSource.PlayOneShot(sound.weaponSound);
-        //audioSource.PlayOneShot(sound.weaponSound);
         GameObject projectile = Instantiate(
             BulletPrefab,
             origin.position,
@@ -222,8 +245,6 @@ public class m416 : MonoBehaviour ,IInventoryItem
         uiAmmoUpdater(currentAmmo + " / inf");
         shotTypeUpdater(shotType);
     }
-
-
 
 }
 
