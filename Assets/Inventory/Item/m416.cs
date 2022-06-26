@@ -67,7 +67,9 @@ public class m416 : MonoBehaviour ,IInventoryItem
 
     AudioSource audioSource;
 
-    public Queue<GameObject> bulletPool = new Queue<GameObject>();
+    [SerializeField]
+    //public Queue<GameObject> bulletPool = new Queue<GameObject>();
+    public List<GameObject> bulletPool = new List<GameObject>();
     public int bulletPoolSize = 10;
 
     private void Start()
@@ -77,8 +79,9 @@ public class m416 : MonoBehaviour ,IInventoryItem
         for(int i = 0; i < bulletPoolSize; i++)
         {
             GameObject bullet = InstanceBullet(attachment.muzzlePos);
-            bulletPool.Enqueue(bullet);
+            bulletPool.Add(bullet);
             bullet.SetActive(false);
+
         }
     }
 
@@ -86,25 +89,40 @@ public class m416 : MonoBehaviour ,IInventoryItem
     {
         if(bulletPool.Count>0)
         {
-            GameObject bullet = bulletPool.Dequeue();
-            bullet.transform.position = attachment.muzzlePos.transform.position;
-            bullet.transform.rotation = attachment.muzzlePos.transform.rotation;
-            bullet.SetActive(true);
-            return bullet;
+            for(int i =0; i < bulletPoolSize; i++)
+            {
+                if(!bulletPool[i].activeInHierarchy)
+                {
+                    GameObject bullet = bulletPool[i];
+                    bullet.transform.position = attachment.muzzlePos.transform.position;
+                    bullet.transform.rotation = attachment.muzzlePos.transform.rotation;
+                    bullet.SetActive(true);
+                    Ammo ammoScriptRef = bullet.GetComponent<Ammo>();
+                    ammoScriptRef.CreateBullet();
+                    ammoScriptRef.onAmmoDestroy += AmmoScriptRef_onAmmoDestroy;
+                    return bullet;
+                }
+            }
         }
         else
         {
             GameObject bullet = InstanceBullet(attachment.muzzlePos);
             return bullet;
         }
+
+        return null;
     }
 
     void ReturnBullet(GameObject bullet)
     {
-        bulletPool.Enqueue(bullet);
         bullet.SetActive(false);
+
     }
 
+    private void AmmoScriptRef_onAmmoDestroy(GameObject bullet)
+    {
+        ReturnBullet(bullet);
+    }
 
     public void UiUpdate(string text)
     {

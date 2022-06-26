@@ -98781,6 +98781,7 @@ MonoBehaviour:
   - {fileID: 6948464254583055227}
   - {fileID: 6948182012718654429}
   hitEffect: {fileID: 988194726153985021}
+  bulletPool: []
   bulletPoolSize: 10
 --- !u!33 &7411678759246432644
 MeshFilter:

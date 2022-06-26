@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,6 +20,14 @@ public class Ammo : MonoBehaviour
     public float bulletSpeed = 1000f;
     public float bulletDrop = 0f;
 
+    float maxLifeTime = 3f;
+
+    public event Action<GameObject> onAmmoDestroy;
+
+    public void OnAmmoDestroy(GameObject bullet)
+    {
+        onAmmoDestroy?.Invoke(bullet);
+    }
     Vector3 GetPosition()
     {
         // p + v*t + 0.5* g *t *t
@@ -41,6 +50,15 @@ public class Ammo : MonoBehaviour
     void Updatebullet(float deltaTime)
     {
         SimulateBullets(deltaTime);
+        DestroyBullet();
+    }
+
+    private void DestroyBullet()
+    {
+        if(time > maxLifeTime)
+        {
+            OnAmmoDestroy(gameObject);
+        }
     }
 
     void SimulateBullets(float deltatime)
@@ -69,6 +87,7 @@ public class Ammo : MonoBehaviour
             Debug.Log(bulletHitInfo.collider.gameObject.name);
             transform.position = bulletHitInfo.point;
             hitEffect.Emit(1);
+            time = maxLifeTime;
         }
         else
         {
