@@ -20,6 +20,8 @@ public class WeaponInHand : MonoBehaviour
     private void Awake()
     {
         instance = this;
+        handIK.weight = 0f;
+        aimLayer.weight = 1f;
     }
 
     private void Start()
@@ -54,34 +56,46 @@ public class WeaponInHand : MonoBehaviour
                 if(rightMouse.IsPressed())
                 {
 
-                    aimLayer.weight += Time.deltaTime / aimDuration;
-                }
-                else
-                {
-                    aimLayer.weight -= Time.deltaTime / aimDuration;
+                //    aimLayer.weight += Time.deltaTime / aimDuration;
+                //}
+                //else
+                //{
+                //    aimLayer.weight -= Time.deltaTime / aimDuration;
+
+                    // use it for zoom in to weapon sight
                 }
             }
         }
         else
         {
-            handIK.weight = 0.0f;
+            //handIK.weight = 0.0f;
         }
     }
 
     void ActiveSlot( int slotNumber,bool activeState)
     {
-        if(slotNumber == 1)
+        if(slotNumber == 1  )
         {
-            activeSlotNumber = slotNumber;
-            activeWeapon =  BagInventory.instance.slot1.assultPrefab;
-            weaponScriptRef = activeWeapon.GetComponent<m416>();
-            weaponScriptRef.mouse = leftMouse;
-            weaponScriptRef.reload = reload;
-            weaponScriptRef.uiAmmoUpdater += WeaponScriptRef_uiUpdater;
-            weaponScriptRef.shotTypeUpdater += WeaponScriptRef_shotTypeUpdater;
-            weaponScriptRef.uiReloadUpdater += WeaponScriptRef_uiReloadUpdater;
-            weaponScriptRef.OnPickup();
-            handIK.weight = 1f;
+            if(activeState)
+            {
+                activeSlotNumber = slotNumber;
+                activeWeapon = BagInventory.instance.slot1.assultPrefab;
+                weaponScriptRef = activeWeapon.GetComponent<m416>();
+                weaponScriptRef.mouse = leftMouse;
+                weaponScriptRef.reload = reload;
+                weaponScriptRef.uiAmmoUpdater += WeaponScriptRef_uiUpdater;
+                weaponScriptRef.shotTypeUpdater += WeaponScriptRef_shotTypeUpdater;
+                weaponScriptRef.uiReloadUpdater += WeaponScriptRef_uiReloadUpdater;
+                weaponScriptRef.OnPickup();
+                handIK.weight = 1f;
+            }
+            else
+            {
+                activeWeapon = null;
+                weaponScriptRef = null;
+                handIK.weight = 0f;
+            }
+
         }
     }
 

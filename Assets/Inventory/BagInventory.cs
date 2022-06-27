@@ -15,8 +15,7 @@ public class BagInventory : MonoBehaviour
     public int MaxSize;
     public int currentSize;
     public Transform itemParent;
-    public Transform slot1WeaponParent;
-    public Transform slot2WeaponParent;
+    public Transform activeWeaponParent;
 
 
     [System.Serializable]
@@ -53,8 +52,14 @@ public class BagInventory : MonoBehaviour
         activeSlot1 = _activeSlot1;
         if (_activeSlot1)
         {
-            activeSlot2 = false;
-            activeSlot3 = false;
+            slot1.assultPrefab.gameObject.transform.SetParent(activeWeaponParent, false);
+            ActiveSlot2(false);
+            //activeSlot3 = false; Change it to ActiveSlot3(false)
+        }
+        else
+        {
+            if(slot1.assultPrefab != null)
+            slot1.assultPrefab.gameObject.transform.SetParent(itemParent, false);
         }
 
     }
@@ -63,11 +68,18 @@ public class BagInventory : MonoBehaviour
 
     public void ActiveSlot2(bool _activeSlot2)
     {
+        BagUIBroadcast.instance.ActiveSlot(2, _activeSlot2);
         activeSlot2 = _activeSlot2;
         if (_activeSlot2)
         {
-            activeSlot1 = false;
-            activeSlot3 = false;
+            slot2.assultPrefab.gameObject.transform.SetParent(activeWeaponParent, false);
+            ActiveSlot1(false);
+            //activeSlot3 = false; Change it to ActiveSlot3(false)
+        }
+        else
+        {
+            if(slot2.assultPrefab != null)
+            slot2.assultPrefab.gameObject.transform.SetParent(itemParent, false);
         }
 
     }
@@ -77,7 +89,7 @@ public class BagInventory : MonoBehaviour
 
     public void SetSlot1Assult(GameObject weapon)
     {
-        activeSlot1 = true;
+      
         //if(slot1.assultPrefab != null)
         //{
         //    //Drop The item If destroy
@@ -92,11 +104,14 @@ public class BagInventory : MonoBehaviour
         {
             if (weapon.GetComponent<m416>())
             {
-                weapon.gameObject.transform.SetParent(slot1WeaponParent, false);
+                weapon.gameObject.transform.SetParent(itemParent, false);
+                //weapon.gameObject.transform.SetParent(activeWeaponParent, false);
                 weapon.gameObject.transform.localPosition = new Vector3(0,0, 0.303f); //was  vecto3.zero 
                 slot1.assultPrefab = weapon;
                 BagUIBroadcast.instance.Slot1AssultAdded(weapon);
                 BagUIBroadcast.instance.ActiveSlot(1,true);
+                ActiveSlot1(true);
+
 
             }
         }
