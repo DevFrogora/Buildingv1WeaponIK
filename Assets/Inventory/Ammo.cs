@@ -7,6 +7,7 @@ public class Ammo : MonoBehaviour
 {
     public ParticleSystem hitEffect;
     public ParticleSystem hitEffectPrefab;
+    public AudioClip hitImpactSound;
     public enum AmmoType
     {
         FivePointFive,
@@ -30,9 +31,14 @@ public class Ammo : MonoBehaviour
         Vector3 gravity = Vector3.down * bulletDrop;
         return (initalPosition) + (initialVelocity * time) + (0.5f * gravity * time * time);
     }
-
+    AudioSource audioSource;
+    int i;
     private void Start()
     {
+        i++;
+        audioSource = GetComponent<AudioSource>();
+        Debug.Log("i called this times"+ i);
+        
     }
     bool isFired = false;
 
@@ -87,7 +93,7 @@ public class Ammo : MonoBehaviour
             {
                 hitted = true;
                 time = maxLifeTime;
-                Debug.Log("we hit the collider no else part");
+                //Debug.Log("we hit the collider no else part");
             }
         }
 
@@ -100,6 +106,7 @@ public class Ammo : MonoBehaviour
             //Instantiate(hitEffect, bulletHitInfo.point, bulletHitInfo.normal, null);
             transform.position = bulletHitInfo.point;
             hitEffect.Emit(1);
+            audioSource.PlayOneShot(hitImpactSound);
             Debug.DrawLine(start, end, Color.red, 5);
             //StartCoroutine(DisableAfterHitEffect());
 
@@ -109,7 +116,7 @@ public class Ammo : MonoBehaviour
         {
             Debug.DrawLine(start, end, Color.red, 5);
             transform.position = end;
-            Debug.Log(" else part");
+            //Debug.Log(" else part");
         }
 
     }

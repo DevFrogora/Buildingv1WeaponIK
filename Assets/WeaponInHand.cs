@@ -12,6 +12,11 @@ public class WeaponInHand : MonoBehaviour
     public float aimDuration = 0.3f;
 
     public UnityEngine.Animations.Rigging.Rig handIK;
+    public TwoBoneIKConstraint LeftHandIk;
+    public TwoBoneIKConstraint RightHandIk;
+    public Transform weaponPivot;
+
+    public RigBuilder rigBuilder;
 
     public Rig aimLayer;
     // Start is called before the first frame update
@@ -22,6 +27,7 @@ public class WeaponInHand : MonoBehaviour
         instance = this;
         handIK.weight = 0f;
         aimLayer.weight = 1f;
+        
     }
 
     private void Start()
@@ -30,6 +36,7 @@ public class WeaponInHand : MonoBehaviour
         GameManager.instance.changeActionMap += ChangeActionMap;
         BagUIBroadcast.instance.activeSlot += ActiveSlot;
         BagUIBroadcast.instance.droppedSlot += DroppedSlot;
+        rigBuilder = GetComponent<RigBuilder>();
 
         RegisterAction();
     }
@@ -88,6 +95,9 @@ public class WeaponInHand : MonoBehaviour
                 weaponScriptRef.uiReloadUpdater += WeaponScriptRef_uiReloadUpdater;
                 weaponScriptRef.OnPickup();
                 handIK.weight = 1f;
+
+                StartCoroutine(WeaponPosition());
+
             }
             else
             {
@@ -96,7 +106,20 @@ public class WeaponInHand : MonoBehaviour
                 handIK.weight = 0f;
             }
 
+
+
         }
+    }
+
+
+    IEnumerator WeaponPosition()
+    {
+        yield return new WaitForEndOfFrame();
+        RightHandIk.data.target.position = (weaponScriptRef.rightHandGrip.position);
+        RightHandIk.data.target.rotation = weaponScriptRef.rightHandGrip.rotation;
+
+        LeftHandIk.data.target.position = weaponScriptRef.leftHandGrip.position;
+        LeftHandIk.data.target.rotation = weaponScriptRef.leftHandGrip.rotation;
     }
 
     private void WeaponScriptRef_uiReloadUpdater(float fillAmount, string text, bool visibility)

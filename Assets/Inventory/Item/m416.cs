@@ -12,6 +12,9 @@ public class m416 : MonoBehaviour ,IInventoryItem
     public float damage;
     public float range;
 
+    public Transform leftHandGrip;
+    public Transform rightHandGrip;
+
     [System.Serializable]
     public class Attachment
     {
@@ -104,6 +107,10 @@ public class m416 : MonoBehaviour ,IInventoryItem
         else
         {
             GameObject bullet = InstanceBullet(attachment.muzzlePos);
+            bullet.transform.position = attachment.muzzlePos.transform.position;
+            bullet.transform.rotation = attachment.muzzlePos.transform.rotation;
+            Ammo ammoScriptRef = bullet.GetComponent<Ammo>();
+            ammoScriptRef.CreateBullet(attachment.muzzlePos.transform);
             return bullet;
         }
 
@@ -169,8 +176,11 @@ public class m416 : MonoBehaviour ,IInventoryItem
     private void FireBullet()
     {
         GameObject bullet = GetBullet();
-        bullet.SetActive(true);
-        UiUpdateOnOnFire();
+        if(bullet != null)
+        {
+            bullet.SetActive(true);
+            UiUpdateOnOnFire();
+        }
     }
 
     void UiUpdateOnOnFire()
