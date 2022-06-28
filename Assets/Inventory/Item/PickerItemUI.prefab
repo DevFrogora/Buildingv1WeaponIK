@@ -151,6 +151,7 @@ MonoBehaviour:
   itemName: {fileID: 4530222895922618628}
   image: {fileID: 4530222895487628015}
   itemPrefab: {fileID: 0}
+  itemId: 0
 --- !u!1 &4530222895370628521
 GameObject:
   m_ObjectHideFlags: 0

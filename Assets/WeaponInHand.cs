@@ -16,7 +16,6 @@ public class WeaponInHand : MonoBehaviour
     public TwoBoneIKConstraint RightHandIk;
     public Transform weaponPivot;
 
-    public RigBuilder rigBuilder;
 
     public Rig aimLayer;
     // Start is called before the first frame update
@@ -36,7 +35,6 @@ public class WeaponInHand : MonoBehaviour
         GameManager.instance.changeActionMap += ChangeActionMap;
         BagUIBroadcast.instance.activeSlot += ActiveSlot;
         BagUIBroadcast.instance.droppedSlot += DroppedSlot;
-        rigBuilder = GetComponent<RigBuilder>();
 
         RegisterAction();
     }
