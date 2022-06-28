@@ -46,41 +46,66 @@ public class ItemPicker : MonoBehaviour
         {
             if (previousItemCount1 != _numFound1)
             {
-                //clearCollider1();
-                Sphere1();
+                Sphere(_numFound1, _colliders1);
                 previousItemCount1 = _numFound1;
             }
-
         }
         else
         {
-            clearCollider1();
+            clearCollider(ref previousItemCount1,_colliders1);
         }
 
         if (_numFound2 > 0)
         {
             if (previousItemCount2 != _numFound2)
             {
-                //clearCollider1();
-                Sphere2();
+                Sphere(_numFound2,_colliders2);
                 previousItemCount2 = _numFound2;
             }
 
         }
         else
         {
-            clearCollider2();
+            clearCollider(ref previousItemCount2,_colliders3);
+        }
+
+        if (_numFound3 > 0)
+        {
+            if (previousItemCount2 != _numFound3)
+            {
+                Sphere(_numFound3, _colliders3);
+                previousItemCount3 = _numFound3;
+            }
+
+        }
+        else
+        {
+            clearCollider(ref previousItemCount3, _colliders3);
+        }
+
+        if (_numFound4 > 0)
+        {
+            if (previousItemCount4 != _numFound2)
+            {
+                Sphere(_numFound4, _colliders4);
+                previousItemCount4 = _numFound4;
+            }
+
+        }
+        else
+        {
+            clearCollider(ref previousItemCount4, _colliders4);
         }
 
 
 
     }
 
-    void Sphere1()
+    void Sphere(int _numFound1, Collider[] _colliders)
     {
         for (int i = 0; i < _numFound1; i++)
         {
-            var foundItem = _colliders1[i].GetComponent<IInventoryItem>();
+            var foundItem = _colliders[i].GetComponent<IInventoryItem>();
             if (itemsUIlist.ContainsKey(foundItem.ItemId))
             {
 
@@ -94,7 +119,7 @@ public class ItemPicker : MonoBehaviour
                 itemUiForPickup.rectTransform.rotation = Quaternion.identity;
                 pickedItemData.image.sprite = foundItem.spriteImage;
                 pickedItemData.itemName.text = foundItem.Name;
-                pickedItemData.itemPrefab = _colliders1[i].gameObject;
+                pickedItemData.itemPrefab = _colliders[i].gameObject;
                 pickedItemData.itemId = pickedItemData.itemPrefab.GetComponent<IInventoryItem>().ItemId;
 
                 itemsUIlist.Add(pickedItemData.itemId, itemUiForPickup);
@@ -102,37 +127,13 @@ public class ItemPicker : MonoBehaviour
         }
     }
 
-    void Sphere2()
+
+
+    void clearCollider(ref int previousItemCount , Collider[] colliders)
     {
-        for (int i = 0; i < _numFound1; i++)
+        for(int i = 0; i < previousItemCount; i ++)
         {
-            var foundItem = _colliders2[i].GetComponent<IInventoryItem>();
-            if (itemsUIlist.ContainsKey(foundItem.ItemId))
-            {
-
-            }
-            else
-            {
-                var itemUiForPickup = Instantiate(pickerUIPrefab);
-                PickerItemUI pickedItemData = itemUiForPickup.GetComponent<PickerItemUI>();
-                itemUiForPickup.gameObject.transform.SetParent(pickerUIContainer.transform);
-                itemUiForPickup.rectTransform.localScale = pickerUIPrefab.transform.localScale;
-                itemUiForPickup.rectTransform.rotation = Quaternion.identity;
-                pickedItemData.image.sprite = foundItem.spriteImage;
-                pickedItemData.itemName.text = foundItem.Name;
-                pickedItemData.itemPrefab = _colliders2[i].gameObject;
-                pickedItemData.itemId = pickedItemData.itemPrefab.GetComponent<IInventoryItem>().ItemId;
-
-                itemsUIlist.Add(pickedItemData.itemId, itemUiForPickup);
-            }
-        }
-    }
-
-    void clearCollider1()
-    {
-        for(int i = 0; i < previousItemCount1; i ++)
-        {
-            var foundItem = _colliders1[i].GetComponent<IInventoryItem>();
+            var foundItem = colliders[i].GetComponent<IInventoryItem>();
             if (itemsUIlist.ContainsKey(foundItem.ItemId))
             {
                 Image imageToDelete;
@@ -142,36 +143,10 @@ public class ItemPicker : MonoBehaviour
             }
             _colliders1[i] = null;
         }
-        previousItemCount1 = 0;
+        previousItemCount = 0;
     }
 
-    void clearCollider2()
-    {
-        for (int i = 0; i < previousItemCount2; i++)
-        {
-            var foundItem = _colliders2[i].GetComponent<IInventoryItem>();
-            if (itemsUIlist.ContainsKey(foundItem.ItemId))
-            {
-                Image imageToDelete;
-                itemsUIlist.TryGetValue(foundItem.ItemId, out imageToDelete);
-                Destroy(imageToDelete.gameObject);
-                itemsUIlist.Remove(foundItem.ItemId);
-            }
-            _colliders2[i] = null;
-        }
-        previousItemCount2 = 0;
-    }
 
-    void clearItemFoundList()
-    {
-        previousItemCount1 = 0;
-        foreach (var item in itemsUIlist)
-        {
-            // Destroy object.
-            Destroy(item.Value.gameObject);
-        }
-        itemsUIlist.Clear();
-    }
 
     private void OnDrawGizmos()
     {
