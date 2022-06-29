@@ -66,12 +66,12 @@ public class ItemPicker : MonoBehaviour
         }
         else
         {
-            clearCollider(ref previousItemCount2,_colliders3);
+            clearCollider(ref previousItemCount2,_colliders2);
         }
 
         if (_numFound3 > 0)
         {
-            if (previousItemCount2 != _numFound3)
+            if (previousItemCount3 != _numFound3)
             {
                 Sphere(_numFound3, _colliders3);
                 previousItemCount3 = _numFound3;
@@ -85,7 +85,7 @@ public class ItemPicker : MonoBehaviour
 
         if (_numFound4 > 0)
         {
-            if (previousItemCount4 != _numFound2)
+            if (previousItemCount4 != _numFound4)
             {
                 Sphere(_numFound4, _colliders4);
                 previousItemCount4 = _numFound4;
@@ -141,7 +141,7 @@ public class ItemPicker : MonoBehaviour
                 Destroy(imageToDelete.gameObject);
                 itemsUIlist.Remove(foundItem.ItemId);
             }
-            _colliders1[i] = null;
+            colliders[i] = null;
         }
         previousItemCount = 0;
     }
@@ -150,14 +150,14 @@ public class ItemPicker : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(_pickerPoint1.position, _pickerPointRadius);
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(_pickerPoint2.position, _pickerPointRadius);
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(_pickerPoint3.position, _pickerPointRadius);
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(_pickerPoint4.position, _pickerPointRadius);
+        //Gizmos.color = Color.red;
+        //Gizmos.DrawWireSphere(_pickerPoint1.position, _pickerPointRadius);
+        //Gizmos.color = Color.green;
+        //Gizmos.DrawWireSphere(_pickerPoint2.position, _pickerPointRadius);
+        //Gizmos.color = Color.yellow;
+        //Gizmos.DrawWireSphere(_pickerPoint3.position, _pickerPointRadius);
+        //Gizmos.color = Color.blue;
+        //Gizmos.DrawWireSphere(_pickerPoint4.position, _pickerPointRadius);
     }
 }
 
