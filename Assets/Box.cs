@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class Box : MonoBehaviour , IGrab
+using System;
+public class Box : MonoBehaviour, IGrab
 {
 
     public int id;
@@ -27,5 +27,25 @@ public class Box : MonoBehaviour , IGrab
     {
 
     }
+
+    public event Action<bool> collideTriggerStatus;
+
+    public void CollideTriggerStatus(bool status)
+    {
+        collideTriggerStatus?.Invoke(status);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        CollideTriggerStatus(true);
+    }
+
+
+    private void OnDrawGizmos()
+    {
+        //Gizmos.DrawWireSphere(checkPoint.transform.position, radius);
+    }
+
+
 
 }

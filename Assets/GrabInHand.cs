@@ -36,11 +36,26 @@ public class GrabInHand : MonoBehaviour
     {
         //activeBox = BagInventory.instance.slot1.assultPrefab;
         boxScriptRef = activeBox.GetComponent<Box>();
+        boxScriptRef.collideTriggerStatus += BoxScriptRef_collideTriggerStatus;
         boxScriptRef.OnPickup();
         handIK.weight = 1f;
         activeBox.gameObject.transform.SetParent(weaponPivot, false);
         StartCoroutine(HandPosition());
 
+    }
+
+    private void BoxScriptRef_collideTriggerStatus(bool obj)
+    {
+        if(obj)
+        {
+            weaponPivot.transform.localPosition = new Vector3(0, 1.186f, 0.2f);
+            weaponPivot.transform.localRotation =Quaternion.Euler(40.0f, 0 , 0);
+        }
+        else
+        {
+            weaponPivot.transform.localPosition = new Vector3(0, 1.186f, 0.464f);
+            weaponPivot.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        }
     }
 
     IEnumerator HandPosition()

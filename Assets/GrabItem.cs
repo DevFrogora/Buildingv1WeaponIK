@@ -28,7 +28,7 @@ public class GrabItem : MonoBehaviour
         _numFound1 = Physics.OverlapSphereNonAlloc(_pickerPoint1.position, _pickerPointRadius,
             _colliders1, _pickerLayerMask);
 
-        if (_numFound1 > 0)
+        if (_numFound1 > 0 && _numFound1 < 2)
         {
             if (previousItemCount1 != _numFound1)
             {
