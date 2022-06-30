@@ -28,7 +28,7 @@ public class GrabItem : MonoBehaviour
         _numFound1 = Physics.OverlapSphereNonAlloc(_pickerPoint1.position, _pickerPointRadius,
             _colliders1, _pickerLayerMask);
 
-        if (_numFound1 > 0 && _numFound1 < 2)
+        if (_numFound1 > 0 )
         {
             if (previousItemCount1 != _numFound1)
             {
@@ -48,6 +48,7 @@ public class GrabItem : MonoBehaviour
         for (int i = 0; i < _numFound1; i++)
         {
             IGrab foundItem = _colliders[i].GetComponent<IGrab>();
+            if (foundItem == null) return;
             if (itemsUIlist.ContainsKey(foundItem.ItemId))
             {
 
@@ -76,6 +77,10 @@ public class GrabItem : MonoBehaviour
         for (int i = 0; i < previousItemCount; i++)
         {
             var foundItem = colliders[i].GetComponent<IGrab>();
+            if (foundItem == null) {
+                colliders[i] = null;
+                return;
+            }
             if (itemsUIlist.ContainsKey(foundItem.ItemId))
             {
                 Image imageToDelete;

@@ -22,7 +22,7 @@ public class Box : MonoBehaviour, IGrab
 
     public ItemType itemType { get => itemtype; set => itemtype = value; }
 
-
+    public GameObject mesh;
     public void OnPickup()
     {
 
@@ -35,9 +35,16 @@ public class Box : MonoBehaviour, IGrab
         collideTriggerStatus?.Invoke(status);
     }
 
+
     private void OnTriggerEnter(Collider other)
     {
         CollideTriggerStatus(true);
+    }
+
+
+    private void OnTriggerExit(Collider other)
+    {
+        CollideTriggerStatus(false);
     }
 
 

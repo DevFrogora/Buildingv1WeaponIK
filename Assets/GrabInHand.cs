@@ -48,13 +48,15 @@ public class GrabInHand : MonoBehaviour
     {
         if(obj)
         {
-            weaponPivot.transform.localPosition = new Vector3(0, 1.186f, 0.2f);
-            weaponPivot.transform.localRotation =Quaternion.Euler(40.0f, 0 , 0);
+            boxScriptRef.mesh.transform.localPosition = new Vector3(0, 0, -0.26f);
+            boxScriptRef.mesh.transform.localRotation = Quaternion.Euler(27.14f, 0, 0);
+
         }
         else
         {
-            weaponPivot.transform.localPosition = new Vector3(0, 1.186f, 0.464f);
-            weaponPivot.transform.localRotation = Quaternion.Euler(0, 0, 0);
+            boxScriptRef.mesh.transform.localPosition = new Vector3(0, 0, 0);
+            boxScriptRef.mesh.transform.localRotation = Quaternion.Euler(0, 0, 0);
+
         }
     }
 
