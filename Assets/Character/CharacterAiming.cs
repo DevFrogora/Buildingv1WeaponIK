@@ -10,6 +10,7 @@ public class CharacterAiming : MonoBehaviour
     Camera mainCamera;
     InputActionMap landActionMap;
     InputAction escape;
+    InputAction alt;
 
     public Transform cameraLookAt;
     public Cinemachine.AxisState xAxis;
@@ -51,7 +52,7 @@ public class CharacterAiming : MonoBehaviour
     void RegisterAction()
     {
         escape = landActionMap["Esc"];
-
+        alt = landActionMap["Alt"];
         escape.performed += escapePerformed;
 
     }
@@ -86,6 +87,7 @@ public class CharacterAiming : MonoBehaviour
 
         cameraLookAt.eulerAngles = new Vector3(yAxis.Value, xAxis.Value, 0);
         float yawCamera = mainCamera.transform.rotation.eulerAngles.y;
+        if(!alt.IsPressed())
         transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, yawCamera, 0), turnSpeed * Time.fixedDeltaTime);
     }
 }

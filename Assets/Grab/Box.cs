@@ -41,6 +41,21 @@ public class Box : MonoBehaviour, IGrab
         CollideTriggerStatus(true);
     }
 
+    private void OnTriggerStay(Collider other)
+    {
+        if (Camera.main.transform.rotation.x > 0)
+        {
+            // when camera is watching down
+            mesh.transform.localRotation = Quaternion.Euler(27.14f, 0, 0);
+
+        }
+        else
+        {
+            // when camera is watching up
+            mesh.transform.localRotation = Quaternion.Euler(-27.14f, 0, 0);
+
+        }
+    }
 
     private void OnTriggerExit(Collider other)
     {

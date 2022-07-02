@@ -48,8 +48,20 @@ public class GrabInHand : MonoBehaviour
     {
         if(obj)
         {
+            if(Camera.main.transform.rotation.x > 0)
+            {
+                // when camera is watching down
+                boxScriptRef.mesh.transform.localRotation = Quaternion.Euler(27.14f, 0, 0);
+
+            }
+            else
+            {
+                // when camera is watching up
+                boxScriptRef.mesh.transform.localRotation = Quaternion.Euler(-27.14f, 0, 0);
+
+            }
+
             boxScriptRef.mesh.transform.localPosition = new Vector3(0, 0, -0.26f);
-            boxScriptRef.mesh.transform.localRotation = Quaternion.Euler(27.14f, 0, 0);
 
         }
         else
